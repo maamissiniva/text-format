@@ -1,2 +1,6 @@
 # text-format
-Java text formating
+
+## Description
+
+Simplifies the production of formatted texts.
+
