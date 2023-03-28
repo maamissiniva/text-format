@@ -1,0 +1,94 @@
+
+plugins {
+    id 'java-library'
+    id 'eclipse'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = 'io.github.maamissiniva'
+archivesBaseName = 'maamissiniva-text-format'
+
+eclipse.project.name = 'external-maamissiniva-text-format'
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+
+dependencies {
+    implementation 'io.github.maamissiniva:maamissiniva-consumer-of-consumer:[0.1.2,)'
+    implementation 'io.github.maamissiniva:maamissiniva-iterable:[0.1.5,)'
+    testImplementation 'junit:junit:4.12'
+}
+
+repositories {
+    mavenCentral()
+}
+
+version = '0.1.0'
+
+jar {
+    manifest {
+        attributes('Implementation-Title':   project.name,
+                   'Implementation-Version': project.version)
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = 'Iterable'
+                description = '.'
+                url = 'https://github.com/maamissiniva/text-format'
+                artifactId = archivesBaseName
+                from components.java
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License 3.0'
+                        url = 'https://www.gnu.org/licenses/lgpl-3.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'maamissiniva'
+                        name = 'Maam Issiniva'
+                        email = 'maamissiniva@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/maamissiniva/text-format.git'
+                    developerConnection = 'scm:git:https://github.com/maamissiniva/text-format.git'
+                    url = 'https://github.com/maamissiniva/text-format'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releaseRepo  = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = isReleaseVersion ? releaseRepo : snapshotRepo
+            credentials {
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : "Unknown user"
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : "Unknown password"
+            }
+        }
+    }
+    
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
+
+
+
