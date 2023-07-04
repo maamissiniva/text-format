@@ -13,8 +13,8 @@ eclipse.project.name = 'external-maamissiniva-text-format'
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 
 dependencies {
-    implementation 'io.github.maamissiniva:maamissiniva-consumer-of-consumer:[0.1.2,)'
-    implementation 'io.github.maamissiniva:maamissiniva-iterable:[0.1.5,)'
+    implementation 'io.github.maamissiniva:maamissiniva-consumer-of-consumer:0.1.2'
+    implementation 'io.github.maamissiniva:maamissiniva-iterable:0.1.5'
     testImplementation 'junit:junit:4.12'
 }
 
@@ -22,7 +22,7 @@ repositories {
     mavenCentral()
 }
 
-version = '0.1.0'
+version = '0.1.1'
 
 jar {
     manifest {

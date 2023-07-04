@@ -1,4 +1,4 @@
-package maamissiniva.text.format;
+package maamissiniva.text.format.rendering;
 
 import static maamissiniva.util.Iterables.singleton;
 

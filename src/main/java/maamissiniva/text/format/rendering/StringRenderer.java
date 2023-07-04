@@ -1,8 +1,8 @@
-package maamissiniva.text.format;
+package maamissiniva.text.format.rendering;
 
-import static maamissiniva.text.format.TextLine.tl;
-import static maamissiniva.text.format.TextLine.tlPad;
-import static maamissiniva.text.format.TextLine.tlString;
+import static maamissiniva.text.format.rendering.TextLine.tl;
+import static maamissiniva.text.format.rendering.TextLine.tlPad;
+import static maamissiniva.text.format.rendering.TextLine.tlString;
 import static maamissiniva.util.Iterables.all;
 import static maamissiniva.util.Iterables.flatMap;
 import static maamissiniva.util.Iterables.foldL;
@@ -16,13 +16,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import maamissiniva.text.format.TextDoc;
 import maamissiniva.text.format.TextDoc.Empty;
 import maamissiniva.text.format.TextDoc.HorizontalAlign;
 import maamissiniva.text.format.TextDoc.HorizontalConcat;
 import maamissiniva.text.format.TextDoc.Indent;
+import maamissiniva.text.format.TextDoc.PVisitor;
 import maamissiniva.text.format.TextDoc.Table;
 import maamissiniva.text.format.TextDoc.Text;
 import maamissiniva.text.format.TextDoc.VerticalAlign;
+import static maamissiniva.text.format.TextDocShortcuts.empty;
 
 /**
  * Render text document in a string.
@@ -62,7 +65,7 @@ public class StringRenderer {
             @Override public TextDoc visit(Indent d) {
                 TextDoc p = prepare(d.doc);
                 if (p instanceof TextDoc.Empty)
-                    return TextDoc.empty;
+                    return empty;
                 return new Indent(d.indent, p);
             }
             @Override public TextDoc visit(Table d) {
@@ -81,7 +84,7 @@ public class StringRenderer {
                     .filter(x -> ! (x instanceof TextDoc.Empty))
                     .asList();
                 if (ds.isEmpty())
-                    return TextDoc.empty;
+                    return empty;
                 return new VerticalAlign(ds);
             }
         });
@@ -166,7 +169,7 @@ public class StringRenderer {
                 int columns = foldL(d.rows, 0, (x,y) -> Math.max(x, y.size()));
                 List<List<TextBlock>> blocks = 
                     map(d.rows, 
-                        r -> take(it(r).concat(repeat(TextDoc.empty)).map(e -> render(e)), columns).asList()).asList();
+                        r -> take(it(r).concat(repeat(empty)).map(e -> render(e)), columns).asList()).asList();
                 List<Integer> columnSizes = 
                     range(0, columns-1).map(i -> foldL(range(0, blocks.size()-1), 0, (x,j) -> Math.max(x, blocks.get(j).get(i).width))).asList();
                 List<TextLine> lines = new ArrayList<>();

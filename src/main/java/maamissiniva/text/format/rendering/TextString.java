@@ -1,4 +1,4 @@
-package maamissiniva.text.format;
+package maamissiniva.text.format.rendering;
 
 /**
  * TextDoc string that may have some padding. 

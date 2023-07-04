@@ -1,4 +1,4 @@
-package maamissiniva.text.format;
+package maamissiniva.text.format.rendering;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +28,8 @@ public class TextBlock {
     public final int height;
     
     public TextBlock(List<TextLine> lines) {
-        this.lines = Collections.unmodifiableList(lines);
-        this.width = Iterables.foldL(lines, 0, (x,y) -> Math.max(x, y.width));
+        this.lines  = Collections.unmodifiableList(lines);
+        this.width  = Iterables.foldL(lines, 0, (x,y) -> Math.max(x, y.width));
         this.height = lines.size();
     }
     

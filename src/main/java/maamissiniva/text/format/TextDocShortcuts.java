@@ -14,26 +14,47 @@ import maamissiniva.util.MaamIterable;
  * Factory methods aimed at simplifying the construction of {@link TextDoc}
  * instances. 
  */
-public class TextDocUtils {
+public class TextDocShortcuts {
 
-    public static final TextDoc empty = TextDoc.empty;
-    public static final TextDoc space = cat(" ");
-    public static final TextDoc comma = cat(",");
+    public static final TextDoc empty      = new TextDoc.Empty();
+    public static final TextDoc space      = txt(" ");
+    public static final TextDoc comma      = txt(",");
+    public static final TextDoc emptySpace = txt("");
     
-    public static TextDoc cat(TextDoc... docs) {
-        return hcat(docs);
-    }
+    /**
+     * Horizontal concatenation of documents.
+     * @param docs documents to concatenate
+     * @return     document
+     */
+//    public static TextDoc cat(TextDoc... docs) {
+//        return hcat(docs);
+//    }
+//    
+//    /**
+//     * Horizontal concatenation of strings that are converted to documents.
+//     * @param docs documents to concatenate
+//     * @return     document
+//     */
+//    public static TextDoc cat(String... ss) {
+//        return hcat(ss);
+//    }
+//    
+//    /**
+//     * Horizontal concatenation of document and strings that are converted to documents.
+//     * @param docs documents to concatenate
+//     * @return     document
+//     */   
+//    public static TextDoc cat(TextDoc doc, String...ss) {
+//       return hcat(doc, ss);
+//    }
     
-    public static TextDoc cat(String... ss) {
-        return hcat(ss);
-    }
-    
-    public static TextDoc cat(TextDoc doc, String...ss) {
-       return hcat(doc, ss);
-    }
-    
+    /**
+     * Horizontal concatenation of documents.
+     * @param ds documents to concatenate
+     * @return   document
+     */
     public static TextDoc hcat(MaamIterable<TextDoc> ds) {
-        return ds.foldL(TextDoc.empty, (x,y) -> new TextDoc.HorizontalConcat(x, y));
+        return ds.foldL(empty, (x,y) -> new TextDoc.HorizontalConcat(x, y));
     }
 
     public static TextDoc hcat(TextDoc doc, String... ss) {
@@ -55,11 +76,28 @@ public class TextDocUtils {
     public static TextDoc hcat(TextDoc... ds) {
         return hcat(ar(ds));
     }
-
-    public static TextDoc nest(int indent, TextDoc doc) {
+    
+    public static TextDoc indent(int indent, TextDoc doc) {
         return new TextDoc.Indent(indent, doc);
     }
     
+    
+    public static TextDoc hali(MaamIterable<TextDoc> ds) {
+        return ds.foldL(empty, (x,y) -> new TextDoc.HorizontalAlign(x, y));
+    }
+    
+    public static TextDoc hali(TextDoc... ds) {
+        return hali(ar(ds));
+    }
+    
+    
+    
+    
+    /**
+     * Break string into lines if needed and add them as a vcat.
+     * @param s string
+     * @return  document
+     */
     public static TextDoc txt(String s) {
         return vcat(ar(s.split("\\R")).map(l -> new TextDoc.Text(l)));
     }
@@ -68,6 +106,7 @@ public class TextDocUtils {
         return hcat(ar(ss).map(s -> txt(s)));
     }
 
+    
     public static TextDoc vcat(List<TextDoc> ds) {
         return new TextDoc.VerticalAlign(ds);
     }

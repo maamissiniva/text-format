@@ -3,11 +3,13 @@ package maamissiniva.text.format;
 import java.util.Arrays;
 import java.util.List;
 
+import maamissiniva.text.format.rendering.StringRenderer;
+
 import static maamissiniva.util.Iterables.ar;
 import static maamissiniva.util.Iterables.it;
 
 /**
- * Text document description.
+ * Text document. 
  */
 public interface TextDoc {
     
@@ -21,14 +23,7 @@ public interface TextDoc {
         B visit(A a, VerticalAlign    d);
     }
     
-    public interface PVisitor<A> extends FVisitor<Void, A> {
-        @Override default A visit(Void a, Empty            d) { return visit(d); }
-        @Override default A visit(Void a, HorizontalAlign  d) { return visit(d); }
-        @Override default A visit(Void a, HorizontalConcat d) { return visit(d); }
-        @Override default A visit(Void a, Indent           d) { return visit(d); }
-        @Override default A visit(Void a, Table            d) { return visit(d); }
-        @Override default A visit(Void a, Text             d) { return visit(d); }
-        @Override default A visit(Void a, VerticalAlign    d) { return visit(d); }
+    public interface PVisitor<A> {
         A visit(Empty            d);
         A visit(HorizontalAlign  d);
         A visit(HorizontalConcat d);
@@ -38,14 +33,7 @@ public interface TextDoc {
         A visit(VerticalAlign    d);
     }
     
-    public interface Visitor extends FVisitor<Void, Void> {
-        @Override default Void visit(Void a, Empty            d) { visit(d); return null; }
-        @Override default Void visit(Void a, HorizontalAlign  d) { visit(d); return null; }
-        @Override default Void visit(Void a, HorizontalConcat d) { visit(d); return null; }
-        @Override default Void visit(Void a, Indent           d) { visit(d); return null; }
-        @Override default Void visit(Void a, Table            d) { visit(d); return null; }
-        @Override default Void visit(Void a, Text             d) { visit(d); return null; }
-        @Override default Void visit(Void a, VerticalAlign    d) { visit(d); return null; }
+    public interface Visitor {
         void visit(Empty            d);
         void visit(HorizontalAlign  d);
         void visit(HorizontalConcat d);
@@ -62,12 +50,27 @@ public interface TextDoc {
 
         @Override
         public <A, B> B accept(A a, FVisitor<A, B> v) {
-            return v.visit(a,  this);
+            return v.visit(a, this);
         }
 
         @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
+        }
+        
+        @Override
         public boolean isEmpty() {
             return true;
+        }
+        
+        @Override
+        public String toString() {
+            return render();
         }
         
     }
@@ -106,7 +109,22 @@ public interface TextDoc {
         
         @Override
         public <A, B> B accept(A a, FVisitor<A, B> v) {
-            return v.visit(a,  this);
+            return v.visit(a, this);
+        }
+
+        @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
+        }
+        
+        @Override
+        public String toString() {
+            return render();
         }
         
     }
@@ -146,7 +164,22 @@ public interface TextDoc {
         
         @Override
         public <A, B> B accept(A a, FVisitor<A, B> v) {
-            return v.visit(a,  this);
+            return v.visit(a, this);
+        }
+
+        @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
+        }
+        
+        @Override
+        public String toString() {
+            return render();
         }
         
     }
@@ -171,11 +204,29 @@ public interface TextDoc {
         
         @Override
         public <A, B> B accept(A a, FVisitor<A, B> v) {
-            return v.visit(a,  this);
+            return v.visit(a, this);
+        }
+
+        @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
+        }
+        
+        @Override
+        public String toString() {
+            return render();
         }
         
     }
     
+    /**
+     * List of list of document that are column aligned. 
+     */
     public static class Table implements TextDoc {
 
         public final List<List<TextDoc>> rows;
@@ -190,8 +241,23 @@ public interface TextDoc {
         }
 
         @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
+        }
+
+        @Override
         public boolean isEmpty() {
             return rows.isEmpty();
+        }
+        
+        @Override
+        public String toString() {
+            return render();
         }
         
     }
@@ -209,7 +275,17 @@ public interface TextDoc {
         
         @Override
         public <A, B> B accept(A a, FVisitor<A, B> v) {
-            return v.visit(a,  this);
+            return v.visit(a, this);
+        }
+
+        @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
         }
         
         @Override
@@ -217,8 +293,16 @@ public interface TextDoc {
             return false;
         }
 
+        @Override
+        public String toString() {
+            return render();
+        }
+        
     }
 
+    /**
+     * Vertically aligned list of documents. 
+     */
     public class VerticalAlign implements TextDoc {
         
         public final List<TextDoc> docs;
@@ -233,7 +317,17 @@ public interface TextDoc {
         
         @Override
         public <A, B> B accept(A a, FVisitor<A, B> v) {
-            return v.visit(a,  this);
+            return v.visit(a, this);
+        }
+
+        @Override
+        public <A> A accept(PVisitor<A> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public void accept(Visitor v) {
+            v.visit(this);
         }
         
         @Override
@@ -241,55 +335,54 @@ public interface TextDoc {
             return false;
         }
         
+        @Override
+        public String toString() {
+            return render();
+        }
+        
     }
 
-    abstract <A,B> B accept(A a, FVisitor<A,B> v);
+    <A,B> B accept(A a, FVisitor<A,B> v);
     
-    TextDoc sp    = new Text(" ");
-    TextDoc empty = new Empty();
+    <A> A accept(PVisitor<A> v);
+
+    void accept(Visitor v);
+    
+    /**
+     * Is this an instance of {@link Empty} ?
+     * @return true is this is an instanceof {@link Empty}, false otherwise
+     */
+    abstract boolean isEmpty();
+
 
     default TextDoc vcat(TextDoc... ds) {
-        return TextDocUtils.vcat(ar(ds).prepend(this));
+        return TextDocShortcuts.vcat(ar(ds).prepend(this));
     }
-    
+
     default TextDoc vcat(Iterable<TextDoc> ds) {
-        return TextDocUtils.vcat(it(ds).prepend(this));
+        return TextDocShortcuts.vcat(it(ds).prepend(this));
     }
-    
+
     default TextDoc vcat(String... ss) {
-        return new TextDoc.VerticalAlign(this, TextDocUtils.txt(ss));
+        return new TextDoc.VerticalAlign(this, TextDocShortcuts.txt(ss));
     }
-    
+
     /**
      * Horizontal concat.
      * @param ss
      * @return
      */
     default TextDoc cat(String... ss) {
-        return TextDocUtils.hcat(this, TextDocUtils.txt(ss));
+        return TextDocShortcuts.hcat(this, TextDocShortcuts.txt(ss));
     }
-    
+
     default TextDoc cat(TextDoc d) {
-        return TextDocUtils.hcat(this, d);
+        return TextDocShortcuts.hcat(this, d);
     }
-    
+
     default String render() {
         return StringRenderer.getText(this);
     }
-
-    default <A> A accept(PVisitor<A> v) {
-        return accept(null, v);
-    }
-    
-    default void accept(Visitor v) {
-        accept(null, v);
-    }
-
-    /**
-     * Is this an instance of {@link Empty} ?
-     * @return true is this is an instanceof {@link Empty}, false otherwise
-     */
-    abstract boolean isEmpty();
 
     /**
      * Println(render(this)).
